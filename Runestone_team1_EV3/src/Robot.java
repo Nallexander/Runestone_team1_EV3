@@ -7,6 +7,11 @@ import java.util.PriorityQueue;
 import java.util.Comparator;
 import java.io.*;
 
+/**
+ * The robot class is the code run in the ev3 robot
+ * It has 2 attributes, the sensor and the priorityQueue 
+ *
+ */
 
 public class Robot {
 	final EV3ColorSensor sensor;
@@ -17,12 +22,14 @@ public class Robot {
 		sensor = new EV3ColorSensor(SensorPort.S1);
 		instructions = new PriorityQueue<JSONObject>(50, new MyJSONComparator()); 
 	}
-	/**
-	 * Connect the robot to the server using sockets. The server and the robot need to be in the same Bluetooth PAN network. 
-	 * @param port Port number of server's socket. 
-	 * @throws IOException
-	 */
 	
+	/**
+	 * Main method that read instructions from the priorityQueue one by one
+	 * type 0 : reset the Queue
+	 * type 1 : keyboard control (manual mode)
+	 * type 2 : motor control (semi-autonomous mode)
+	 * @param args
+	 */
 	
 	public static void main(String[] args){
 		
@@ -30,14 +37,7 @@ public class Robot {
 		Thread t = new Thread(new Bluetooth(ev3));
 		t.start();
 		
-		
-		
-		
-		//ev3.instructions.add(ins2);
-		//ev3.instructions.add(ins3);
-		//ev3.instructions.add(ins1);
-		//ev3.instructions.add(ins4); //TODO receive these ev3.instructions from bluetooth
-		
+			
 		JSONObject currentInstruct = new JSONObject();
 		
 		while (true){
@@ -59,13 +59,17 @@ public class Robot {
 					default: System.out.println("Error: invalid type");
 						     break;
 				}
-			}
-			
+			}	
 		}
-		//ev3.sensor.close();
 	}
 	
-		
+	/**
+	 * move method in case of type 2
+	 * it start the motor selected, with the speed the direction and the angle 	
+	 * 
+	 * @param infos JSON object that contain all needed information to activate the robot
+	 * @param sensor
+	 */
 		
 	private static void move(JSONObject infos, EV3ColorSensor sensor){
 		switch (infos.getInt("motor")) {
@@ -121,6 +125,11 @@ public class Robot {
 		}
 	}
 
+	/**
+	 * This method is used to follow lines on the floor, correcting the speed of one wheel if it goes too fast
+	 * The function stop when an intersection is reached
+	 * 
+	 */
 	private static void detectIntersection(EV3ColorSensor sensor){
 		
 		while(true){
@@ -141,6 +150,10 @@ public class Robot {
 		
 	}
 
+	/**
+	 * This method is used when contoling the robot using keyboard
+	 * @param infos
+	 */
 	private static void keyPress(JSONObject infos){
 		switch (infos.getInt("key")){
 			case 1: //left motor
@@ -168,7 +181,6 @@ public class Robot {
 				if(infos.getInt("press") > 0){
 					Motor.A.forward();
 					Motor.B.forward();
-					Delay.msDelay(100);
 
 				}else{
 					Motor.A.stop(true);
@@ -181,7 +193,6 @@ public class Robot {
 				if(infos.getInt("press") > 0){
 					Motor.A.backward();
 					Motor.B.backward();
-					Delay.msDelay(100);
 				}else{
 					Motor.A.stop(true);
 					Motor.B.stop();
@@ -206,6 +217,10 @@ public class Robot {
 		}
 	}
 }
+
+/**
+ * Comparator used in the priority queue
+ */
 class MyJSONComparator implements Comparator<JSONObject> {
 
 		public int compare(JSONObject o1, JSONObject o2) {
