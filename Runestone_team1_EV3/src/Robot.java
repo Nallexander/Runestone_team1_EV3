@@ -83,7 +83,7 @@ public class Robot {
 						Motor.B.forward();
 
 					}
-					Delay.msDelay(1000); 
+					Delay.msDelay(2000); 
 					Motor.A.stop(true);
 					Motor.B.stop();
 					break;
@@ -97,7 +97,7 @@ public class Robot {
 						Motor.B.backward();
 						Motor.A.forward();
 					}
-					Delay.msDelay(1000); 
+					Delay.msDelay(2000); 
 					Motor.B.stop(true);
 					Motor.A.stop();
 					break;
@@ -111,7 +111,8 @@ public class Robot {
 						Motor.A.backward();
 						Motor.B.backward();
 					}
-					Delay.msDelay(1000);
+					Delay.msDelay(1000); 
+
 					detectIntersection(sensor);
 					Motor.A.stop(true); 
 					Motor.B.stop();
@@ -134,17 +135,23 @@ public class Robot {
 		
 		while(true){
 			System.out.println(sensor.getColorID());
-			Delay.msDelay(100);
-			if (sensor.getColorID() == 0 || sensor.getColorID() == 6){
+			
+			if (sensor.getColorID() == 0){
 				break;
 			}
-			if (sensor.getColorID() == 1){
-				Motor.A.setSpeed(Motor.A.getRotationSpeed() - 50);
+			if (sensor.getColorID() == 13){
+				Motor.A.setSpeed(Motor.A.getRotationSpeed() - 30);
+				Delay.msDelay(500);
+				Motor.A.setSpeed(Motor.A.getRotationSpeed() + 30);
+
 			}
 			if (sensor.getColorID() == 2){
-				Motor.B.setSpeed(Motor.B.getRotationSpeed() - 50);
+				Motor.B.setSpeed(Motor.B.getRotationSpeed() - 30);
+				Delay.msDelay(500);
+				Motor.B.setSpeed(Motor.B.getRotationSpeed() + 30);
+
 			}
-		
+			
 		
 		}
 		
@@ -157,7 +164,7 @@ public class Robot {
 	private static void keyPress(JSONObject infos){
 		switch (infos.getInt("key")){
 			case 1: //left motor
-				Motor.A.setSpeed(360);
+				Motor.A.setSpeed(540);
 				if(infos.getInt("press") > 0){
 					Motor.A.forward();
 					Delay.msDelay(100);
@@ -166,7 +173,7 @@ public class Robot {
 				}
 				break;
 			case 2: //rigth motor
-				Motor.B.setSpeed(360);
+				Motor.B.setSpeed(540);
 				if(infos.getInt("press") > 0){
 					Motor.B.forward();
 					Delay.msDelay(100);
@@ -183,8 +190,8 @@ public class Robot {
 					Motor.B.forward();
 
 				}else{
-					Motor.A.stop(true);
-					Motor.B.stop();
+					Motor.A.flt(true);
+					Motor.B.flt();
 				}
 				break;
 			case 4: //both backward
@@ -194,8 +201,8 @@ public class Robot {
 					Motor.A.backward();
 					Motor.B.backward();
 				}else{
-					Motor.A.stop(true);
-					Motor.B.stop();
+					Motor.A.flt(true);
+					Motor.B.flt();
 				}
 				break;
 			case 5: //elevator up

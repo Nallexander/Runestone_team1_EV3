@@ -45,6 +45,7 @@ public class Bluetooth implements Runnable {
 				instruction = inputStream.readLine();
 				if (instruction != null){
 					System.out.println(instruction);
+					//instruction = instruction.substring(2);
 					ev3.instructions.add(new JSONObject(instruction));
 				}
 				

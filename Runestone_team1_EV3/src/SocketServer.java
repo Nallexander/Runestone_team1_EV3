@@ -55,7 +55,7 @@ public class SocketServer extends KeyAdapter {
 				+ " \"content\" : { "
 				+ " \"motor\" : \"3\" ,"
 				+ " \"direction\" : \"1\" , "
-				+ " \"speed\" : \"360\" , "
+				+ " \"speed\" : \"200\" , "
 				+ " \"angle\" : \"-180\" }"
 			+ " }\n");
 		//Thread.sleep(2000);
@@ -63,14 +63,14 @@ public class SocketServer extends KeyAdapter {
 				+ " \"content\" : { "
 				+ " \"motor\" : \"1\" ,"
 				+ " \"direction\" : \"1\" , "
-				+ " \"speed\" : \"720\" , "
+				+ " \"speed\" : \"200\" , "
 				+ " \"angle\" : \"-180\" }"
 			+ " }\n");
 		out.writeUTF("{ \"type\": \"2\" , "
 				+ " \"content\" : { "
 				+ " \"motor\" : \"3\" ,"
 				+ " \"direction\" : \"1\" , "
-				+ " \"speed\" : \"360\" , "
+				+ " \"speed\" : \"200\" , "
 				+ " \"angle\" : \"-180\" }"
 			+ " }\n");
 		
