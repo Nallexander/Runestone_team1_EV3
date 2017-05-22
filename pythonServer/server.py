@@ -2,6 +2,7 @@ from threading import Thread
 import serialComm
 import json
 import time
+import robotController
 from firebase import firebase
 
 firebase = firebase.FirebaseApplication('https://runestone-d1faf.firebaseio.com/', None)
@@ -17,6 +18,14 @@ def packageHandler():
     packageName = "Package "+str(packageIncrement)
     packageIncrement += 1
     firebase.patch('/warehouse/'+str(packageName), {'row': ''+str(emptySlot[0]), 'shelf':''+str(emptySlot[1]),'temperature':''}) #Store pakcage in database
+
+    #TODO ROBOT STUFF
+    destinationX = int(emptySlot[0])
+    destinationY = int(emptySlot[1])
+
+    robotController.makePath(currentX, currentY, destinationX, destinationY)
+
+
     global packageBeingHandled
     packageBeingHandled = False #Tell system it is ready for another package
 
@@ -78,5 +87,7 @@ def findPackage(packageName):
     return result
 
 if __name__ == "__main__":
-    packageHandler();
+    #packageHandler();
+    robotController.setup();
+    print "hi"
 #    serialComm.readCommValues("COM4", handleArduinoValues);

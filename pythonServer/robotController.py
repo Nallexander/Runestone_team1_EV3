@@ -9,32 +9,32 @@ MAX_SHELVES = 5
 
 def goStraight(speed, direction):
     return "{ \"type\": \"2\" , \"content\" : { \"motor\" : \"3\" , \"direction\" : \"" + str(direction) + "\" , \"speed\" : \"" + str(speed) + "\" }}\n"
-    
+
 def turnRight(speed, direction):
     return "{ \"type\": \"2\" , \"content\" : { \"motor\" : \"1\" , \"direction\" : \"" +str(direction)+ "\" , \"speed\" : \""+ str(speed) + "\" }}\n"
-    
+
 def elevator(angle, direction):
     return "{ \"type\": \"2\" , \"content\" : { \"motor\" : \"4\" , \"direction\" : \"" +str(direction)+ "\" , \"angle\" : \""+ str(angle) + "\" }}\n"
-    
+
 def JSONkey(key, press):
     return "{ \"type\" : \"1\", \"content\" : { \"key\" : \"" +str(key)+ "\", \"press\" : \""+str(press)+"\" }}\n"
 
 def makePath (loc_x, loc_y, dest_x, dest_y):
     if loc_x != dest_x: #location and destination are not on the same row
-        
+
         if loc_x != 0:
             mv_on_row = MAX_SHELVES + 1 - loc_y
         else: #if the current row is 0
             mv_on_row = 1
-        
+
         for i in range(mv_on_row):
             robotSend.instructions.put(goStraight(200, 1))
-        
+
         robotSend.instructions.put(turnRight(360, 1))
-        
+
         for i in range(abs(loc_x - dest_x)):
             robotSend.instructions.put(goStraight(200, 1))
-        
+
         robotSend.instructions.put(turnRight(360, 1))
 
         for i in range(dest_y):
@@ -46,7 +46,7 @@ def grabAndRelease(direction):
     #robotSend.instructions.put(elevator(200, direction))
     robotSend.instructions.put(goStraight(200, -1))
     robotSend.instructions.put(turnRight(360, -1))
-    
+
 def keyboardMode():
     pygame.init()
     pygame.display.iconify()
@@ -68,7 +68,7 @@ def keyboardMode():
                     robotSend.instructions.put(JSONkey(5, 1))
                 if event.key == pygame.K_n:
                     robotSend.instructions.put(JSONkey(6, 1))
-                    
+
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_UP:
                     robotSend.instructions.put(JSONkey(3, -1))
@@ -84,12 +84,12 @@ def keyboardMode():
                     robotSend.instructions.put(JSONkey(6, -1))
 
 
-
-if __name__ == "__main__":
+def setup():
     robotSend.sendRobotInstructions("10.0.1.1", 1111)
-   
     #makePath(0, 1, 2, 3)
-    grabAndRelease(1)
-    #keyboardMode()
+    #grabAndRelease(1)
+    keyboardMode()
     print("done")
-    
+
+#if __name__ == "__main__":
+    #print("done")
