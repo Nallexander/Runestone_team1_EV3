@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import json.JSONException;
 import json.JSONObject;
 import json.JSONTokener;
 import lejos.hardware.ev3.EV3;
@@ -40,20 +41,39 @@ public class Bluetooth implements Runnable {
 		}
 		
 		String instruction;
+		String response;
+		
 		while(true){
-			try {
-				instruction = inputStream.readLine();
-				if (instruction != null){
-					System.out.println(instruction);
-					//instruction = instruction.substring(2);
-					ev3.instructions.add(new JSONObject(instruction));
+			if (!ev3.tasksDone.isEmpty()){
+				response = ev3.tasksDone.remove().toString();
+				try {
+					outputStream.write(response, 0, response.length());
+					System.out.println("message send");
+
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				
-			} catch (IOException e) {
+			}
+			
+			try {
+				if (inputStream.ready()){
+					try {
+						instruction = inputStream.readLine();
+						if (instruction != null){
+							System.out.println(instruction);
+							//instruction = instruction.substring(2);
+							ev3.instructions.add(new JSONObject(instruction));
+						}
+												
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			} catch (JSONException | IOException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
 	}
 	
 	/**

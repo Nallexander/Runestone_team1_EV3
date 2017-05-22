@@ -2,8 +2,11 @@ import json.*;
 import lejos.hardware.motor.Motor;
 import lejos.utility.Delay;
 import lejos.hardware.sensor.EV3ColorSensor;
+import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.port.SensorPort;
 import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.LinkedList;
 import java.util.Comparator;
 import java.io.*;
 
@@ -15,12 +18,17 @@ import java.io.*;
 
 public class Robot {
 	final EV3ColorSensor sensor;
+	final EV3GyroSensor gyro;
 	public PriorityQueue<JSONObject> instructions; 
+	public Queue<JSONObject> tasksDone;
 
 	
 	public Robot() {
 		sensor = new EV3ColorSensor(SensorPort.S1);
-		instructions = new PriorityQueue<JSONObject>(50, new MyJSONComparator()); 
+		gyro = new EV3GyroSensor(SensorPort.S4);
+		gyro.reset();
+		instructions = new PriorityQueue<JSONObject>(50, new MyJSONComparator());
+		tasksDone = new LinkedList<JSONObject>();
 	}
 	
 	/**
@@ -36,6 +44,7 @@ public class Robot {
 		Robot ev3 = new Robot();
 		Thread t = new Thread(new Bluetooth(ev3));
 		t.start();
+		
 		
 			
 		JSONObject currentInstruct = new JSONObject();
@@ -53,12 +62,13 @@ public class Robot {
 						 	 break;
 					
 					case 2:  System.out.println("motor type");
-					     	 move(currentInstruct.getJSONObject("content"), ev3.sensor);
+					     	 move(currentInstruct.getJSONObject("content"), ev3);
 							 break;
 				
 					default: System.out.println("Error: invalid type");
 						     break;
 				}
+				ev3.tasksDone.add(currentInstruct);
 			}	
 		}
 	}
@@ -71,7 +81,7 @@ public class Robot {
 	 * @param sensor
 	 */
 		
-	private static void move(JSONObject infos, EV3ColorSensor sensor){
+	private static void move(JSONObject infos, Robot ev3){
 		switch (infos.getInt("motor")) {
 			case 1: Motor.A.setSpeed(infos.getInt("speed"));//left motor
 					Motor.B.setSpeed(infos.getInt("speed"));
@@ -83,7 +93,8 @@ public class Robot {
 						Motor.B.forward();
 
 					}
-					Delay.msDelay(2000); 
+					mesureAngle(ev3);
+					//Delay.msDelay(2000); 
 					Motor.A.stop(true);
 					Motor.B.stop();
 					break;
@@ -97,7 +108,8 @@ public class Robot {
 						Motor.B.backward();
 						Motor.A.forward();
 					}
-					Delay.msDelay(2000); 
+					mesureAngle(ev3);
+					//Delay.msDelay(2000); 
 					Motor.B.stop(true);
 					Motor.A.stop();
 					break;
@@ -113,7 +125,7 @@ public class Robot {
 					}
 					Delay.msDelay(1000); 
 
-					detectIntersection(sensor);
+					detectIntersection(ev3);
 					Motor.A.stop(true); 
 					Motor.B.stop();
 					break;
@@ -131,21 +143,21 @@ public class Robot {
 	 * The function stop when an intersection is reached
 	 * 
 	 */
-	private static void detectIntersection(EV3ColorSensor sensor){
+	private static void detectIntersection(Robot ev3){
 		
 		while(true){
-			System.out.println(sensor.getColorID());
+			//System.out.println(ev3.sensor.getColorID());
 			
-			if (sensor.getColorID() == 0){
+			if (ev3.sensor.getColorID() == 0){
 				break;
 			}
-			if (sensor.getColorID() == 13){
+			if (ev3.sensor.getColorID() == 13){
 				Motor.A.setSpeed(Motor.A.getRotationSpeed() - 30);
 				Delay.msDelay(500);
 				Motor.A.setSpeed(Motor.A.getRotationSpeed() + 30);
 
 			}
-			if (sensor.getColorID() == 2){
+			if (ev3.sensor.getColorID() == 2){
 				Motor.B.setSpeed(Motor.B.getRotationSpeed() - 30);
 				Delay.msDelay(500);
 				Motor.B.setSpeed(Motor.B.getRotationSpeed() + 30);
@@ -155,6 +167,18 @@ public class Robot {
 		
 		}
 		
+	}
+	
+	private static void mesureAngle(Robot ev3){
+		ev3.gyro.reset();
+		while(true){
+			float angle[] = new float[1];
+			ev3.gyro.getAngleMode().fetchSample(angle, 0);
+			//System.out.println(angle[0]);
+			if (Math.abs(angle[0]) > 75){
+				break;
+			}
+		}
 	}
 
 	/**
@@ -233,6 +257,10 @@ class MyJSONComparator implements Comparator<JSONObject> {
 		public int compare(JSONObject o1, JSONObject o2) {
 		    int int1 = (o1.getInt("type"));
 		    int int2 = (o2.getInt("type"));
-		    return (int1 - int2);
+		    int diff = (int1 - int2);
+		    if (diff == 0){
+		    	return 1;
+		    }
+		    return diff;
 		}
 	}
