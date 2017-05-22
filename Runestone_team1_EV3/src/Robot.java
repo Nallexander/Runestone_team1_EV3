@@ -19,7 +19,7 @@ import java.io.*;
 public class Robot {
 	final EV3ColorSensor sensor;
 	final EV3GyroSensor gyro;
-	public PriorityQueue<JSONObject> instructions; 
+	public Queue<JSONObject> instructions; 
 	public Queue<JSONObject> tasksDone;
 
 	
@@ -27,7 +27,7 @@ public class Robot {
 		sensor = new EV3ColorSensor(SensorPort.S1);
 		gyro = new EV3GyroSensor(SensorPort.S4);
 		gyro.reset();
-		instructions = new PriorityQueue<JSONObject>(50, new MyJSONComparator());
+		instructions = new LinkedList<JSONObject>();
 		tasksDone = new LinkedList<JSONObject>();
 	}
 	
@@ -63,12 +63,12 @@ public class Robot {
 					
 					case 2:  System.out.println("motor type");
 					     	 move(currentInstruct.getJSONObject("content"), ev3);
+							 ev3.tasksDone.add(currentInstruct);
 							 break;
 				
 					default: System.out.println("Error: invalid type");
 						     break;
 				}
-				ev3.tasksDone.add(currentInstruct);
 			}	
 		}
 	}
@@ -259,7 +259,7 @@ class MyJSONComparator implements Comparator<JSONObject> {
 		    int int2 = (o2.getInt("type"));
 		    int diff = (int1 - int2);
 		    if (diff == 0){
-		    	return 1;
+		    	diff = 1;
 		    }
 		    return diff;
 		}

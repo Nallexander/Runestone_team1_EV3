@@ -4,6 +4,7 @@ import Queue
 from threading import Thread
 
 instructions = Queue.Queue()
+path = []
 
 def sendRobotInstructions(addr, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -20,7 +21,9 @@ def sendRobotInstructions(addr, port):
         msg =''
         while(True):
             msg, _ = s.recvfrom(1024)
-            print(msg[2:])
+            if msg != '':
+                print(path.pop(0))
+            
             
 
     sendThread = Thread(target = send, args = ())
