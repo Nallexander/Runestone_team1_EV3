@@ -1,6 +1,7 @@
 import serial
 import time
 import json
+import struct
 from threading import Thread
 
 jsonData = "";
@@ -17,6 +18,7 @@ def is_json(myjson):
 #the value (if it is formatted as JSON) to the callback function.
 def readCommValues(port,callback):
     def read(port, callback):
+        global ser
         ser = serial.Serial(port,timeout=1)
         data = "";
         while 1:

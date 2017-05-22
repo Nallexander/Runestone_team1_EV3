@@ -1,6 +1,7 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <DHT_U.h>
+#include <ctype.h>
 
 #include <Adafruit_SI1145.h>
 #include <ArduinoJson.h>
@@ -60,7 +61,8 @@ void loop()
  root["Light"] = readLight();
  root["Temperature"] = readTemp(); 
  root.printTo(BTserial);
- root.printTo(Serial);
+ //root.printTo(Serial);
+  
  delay(1000); //Read values once every second
 }
 
