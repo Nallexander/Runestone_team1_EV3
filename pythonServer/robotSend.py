@@ -19,14 +19,11 @@ def sendRobotInstructions(addr, port):
     def recv():
         msg =''
         while(True):
-            print("here")
-            msg += s.recv(1).decode("UTF-8")
-            if '\n' in msg:
-                print(msg)
-                msg=''
+            msg, _ = s.recvfrom(1024)
+            print(msg[2:])
+            
 
-
-    thread = Thread(target = send, args = ())
-    thread.start()
-    thread1 = Thread(target = recv, args = ())
-    thread1.start()
+    sendThread = Thread(target = send, args = ())
+    sendThread.start()
+    recvThread = Thread(target = recv, args = ())
+    recvThread.start()
