@@ -20,8 +20,10 @@ def packageHandler():
     firebase.put('','/warehouse/'+str(packageName), {'row': (emptySlot[0]), 'shelf':(emptySlot[1]),'temperature':0, 'stored': False}) #Store package in database
 
     #TODO ROBOT STUFF
+    #current x,y of robot - 0,1 is idle position of robot
     currentX = 0
     currentY = 1
+
     destinationX = int(emptySlot[0])
     destinationY = int(emptySlot[1])
     robotController.makePath(currentX, currentY, destinationX, destinationY)

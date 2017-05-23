@@ -2,7 +2,9 @@ import socket
 import select
 import Queue
 from threading import Thread
+from firebase import firebase
 
+firebase = firebase.FirebaseApplication('https://runestone-d1faf.firebaseio.com/', None)
 instructions = Queue.Queue()
 path = []
 
@@ -22,9 +24,10 @@ def sendRobotInstructions(addr, port):
         while(True):
             msg, _ = s.recvfrom(1024)
             if msg != '':
-                print(path.pop(0))
-            
-            
+                pathTuple = path.pop(0)
+                if(pathTuple):
+                    firebase.put('','/warehouse/robots/robot1', {'row': pathTuple[0], 'shelf':pathTuple[1]})
+                
 
     sendThread = Thread(target = send, args = ())
     sendThread.start()
