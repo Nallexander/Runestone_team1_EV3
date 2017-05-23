@@ -64,9 +64,14 @@ public class Bluetooth implements Runnable {
 						if (instruction != null){
 							System.out.println(instruction);
 							//instruction = instruction.substring(2);
-							ev3.instructions.add(new JSONObject(instruction));
-						}
-												
+							JSONObject JSONInstruction = new JSONObject(instruction);
+							if (JSONInstruction.getInt("type")==0){
+								ev3.instructions.clear();
+							}else{
+								ev3.instructions.add(JSONInstruction);
+						
+							}
+						}					
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

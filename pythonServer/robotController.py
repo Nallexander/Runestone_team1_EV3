@@ -13,6 +13,9 @@ def goStraight(speed, direction):
 def turnRight(speed, direction):
     return "{ \"type\": \"2\" , \"content\" : { \"motor\" : \"1\" , \"direction\" : \"" +str(direction)+ "\" , \"speed\" : \""+ str(speed) + "\" }}\n"
 
+def turnLeft(speed, direction):
+    return "{ \"type\": \"2\" , \"content\" : { \"motor\" : \"2\" , \"direction\" : \"" +str(direction)+ "\" , \"speed\" : \""+ str(speed) + "\" }}\n"
+    
 def elevator(angle, direction):
     return "{ \"type\": \"2\" , \"content\" : { \"motor\" : \"4\" , \"direction\" : \"" +str(direction)+ "\" , \"angle\" : \""+ str(angle) + "\" }}\n"
 
@@ -71,15 +74,16 @@ def grabAndRelease(direction):
     robotSend.path.append(None)
     robotSend.path.append(None)
     
-    robotSend.instructions.put(turnRight(360, 1))
+    robotSend.instructions.put(turnLeft(360, 1))
     robotSend.instructions.put(goStraight(200, 1))
     robotSend.instructions.put(elevator(200, direction))
     robotSend.instructions.put(goStraight(200, -1))
-    robotSend.instructions.put(turnRight(360, -1))
+    robotSend.instructions.put(turnLeft(360, -1))
 
 def keyboardMode():
     pygame.init()
     pygame.display.iconify()
+    robotSend.instructions.put(" \"type\" : \"0\" ")
     while True:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
