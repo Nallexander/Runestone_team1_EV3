@@ -88,7 +88,7 @@ def findPackage(packageName):
     return result
 
 if __name__ == "__main__":
-    packageHandler();
-    #robotController.setup();
+    #packageHandler();
+    robotController.setup();
     print "hi"
 #    serialComm.readCommValues("COM4", handleArduinoValues);

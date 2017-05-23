@@ -126,6 +126,9 @@ public class Robot {
 					Delay.msDelay(1500); 
 
 					detectIntersection(ev3);
+					if(infos.getInt("direction") == 1){
+						Delay.msDelay(400);
+					}
 					Motor.A.stop(true); 
 					Motor.B.stop();
 					break;
@@ -150,22 +153,28 @@ public class Robot {
 			//System.out.println(ev3.sensor.getColorID());
 			
 			if (ev3.sensor.getColorID() == 0){//red
+				//Delay.msDelay(200);
 				break;
 			}
 			if (ev3.sensor.getColorID() == 13){//green
 				Motor.A.setSpeed(Motor.A.getSpeed() - 30);
-				//Delay.msDelay(500);
-				while(ev3.sensor.getColorID() == 13){
-				}
-				Motor.A.setSpeed(Motor.A.getSpeed() + 30);
+				Delay.msDelay(400);
+				//while(ev3.sensor.getColorID() == 13){
+				//}
+				Motor.A.setSpeed(Motor.A.getSpeed() + 60);
+				Delay.msDelay(100);
+				Motor.A.setSpeed(Motor.A.getSpeed() - 30);
+
 
 			}
 			if (ev3.sensor.getColorID() == 2){//blue
 				Motor.B.setSpeed(Motor.B.getSpeed() - 30);
-				//Delay.msDelay(500);
-				while(ev3.sensor.getColorID() == 2){
-				}
-				Motor.B.setSpeed(Motor.B.getSpeed() + 30);
+				Delay.msDelay(400);
+				//while(ev3.sensor.getColorID() == 2){
+				//}
+				Motor.B.setSpeed(Motor.B.getSpeed() + 60);
+				Delay.msDelay(100);
+				Motor.B.setSpeed(Motor.B.getSpeed() - 30);
 
 			}
 			

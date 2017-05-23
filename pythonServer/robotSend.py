@@ -26,7 +26,8 @@ def sendRobotInstructions(addr, port):
             if msg != '':
                 pathTuple = path.pop(0)
                 if(pathTuple):
-                    firebase.put('','/warehouse/robots/robot1', {'row': pathTuple[0], 'shelf':pathTuple[1]})
+                    print(pathTuple)
+                    firebase.put('','/robots/robot1', {'row': pathTuple[0], 'shelf':pathTuple[1]})
                 
 
     sendThread = Thread(target = send, args = ())
