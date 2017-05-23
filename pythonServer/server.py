@@ -17,15 +17,14 @@ def packageHandler():
     global packageIncrement
     packageName = "Package "+str(packageIncrement)
     packageIncrement += 1
-    firebase.patch('/warehouse/'+str(packageName), {'row': ''+str(emptySlot[0]), 'shelf':''+str(emptySlot[1]),'temperature':''}) #Store pakcage in database
+    firebase.put('','/warehouse/'+str(packageName), {'row': (emptySlot[0]), 'shelf':(emptySlot[1]),'temperature':0, 'stored': False}) #Store package in database
 
     #TODO ROBOT STUFF
+    currentX = 0
+    currentY = 1
     destinationX = int(emptySlot[0])
     destinationY = int(emptySlot[1])
-
     robotController.makePath(currentX, currentY, destinationX, destinationY)
-
-
     global packageBeingHandled
     packageBeingHandled = False #Tell system it is ready for another package
 
@@ -56,7 +55,7 @@ def updateTemperature(temp):
     if(temperatureUpdateTimer <= 0): #Update when timer reaches 0
         for item in wares:
             if(wares[item]['row'] == 1): #Update all items in row 1
-                firebase.patch("/warehouse/"+item,{'temperature':''+str(temp)})
+                firebase.patch("/warehouse/"+item,{'temperature':temp})
                 temperatureUpdateTimer = 5 #Time between temperature updates
     temperatureUpdateTimer = temperatureUpdateTimer-1
 
@@ -87,7 +86,7 @@ def findPackage(packageName):
     return result
 
 if __name__ == "__main__":
-    #packageHandler();
-    robotController.setup();
+    packageHandler();
+    #robotController.setup();
     print "hi"
 #    serialComm.readCommValues("COM4", handleArduinoValues);
