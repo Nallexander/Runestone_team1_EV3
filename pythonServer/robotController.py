@@ -4,7 +4,7 @@ import robotSend
 import time
 
 MAX_ROWS = 4
-MAX_SHELVES = 5
+MAX_SHELVES = 1
 
 
 def goStraight(speed, direction):
@@ -40,13 +40,13 @@ def makePath (loc_x, loc_y, dest_x, dest_y):
             cur_y = 0
 
         for i in range(mv_on_row):
-            robotSend.instructions.put(goStraight(200, 1))
+            robotSend.instructions.put(goStraight(120, 1))
 
-        robotSend.instructions.put(turnRight(360, 1))
+        robotSend.instructions.put(turnRight(200, 1))
         robotSend.path.append(None)
 
         for i in range(abs(loc_x - dest_x)):
-            robotSend.instructions.put(goStraight(200, 1))
+            robotSend.instructions.put(goStraight(120, 1))
             if cur_x == 0:
                 robotSend.path.append((cur_x + i + 1, cur_y))
             else:
@@ -57,11 +57,11 @@ def makePath (loc_x, loc_y, dest_x, dest_y):
         else:
             cur_x = 0
 
-        robotSend.instructions.put(turnRight(360, 1))
+        robotSend.instructions.put(turnRight(200, 1))
         robotSend.path.append(None)
 
         for i in range(dest_y):
-            robotSend.instructions.put(goStraight(200, 1))
+            robotSend.instructions.put(goStraight(120, 1))
             if cur_x == 0:
                 robotSend.path.append((0, 1))
             else:
@@ -74,11 +74,11 @@ def grabAndRelease(direction):
     robotSend.path.append(None)
     robotSend.path.append(None)
     
-    robotSend.instructions.put(turnLeft(360, 1))
-    robotSend.instructions.put(goStraight(200, 1))
+    robotSend.instructions.put(turnLeft(200, 1))
+    robotSend.instructions.put(goStraight(120, 1))
     robotSend.instructions.put(elevator(200, direction))
-    robotSend.instructions.put(goStraight(200, -1))
-    robotSend.instructions.put(turnLeft(360, -1))
+    robotSend.instructions.put(goStraight(120, -1))
+    robotSend.instructions.put(turnRight(200, 1))
 
 def keyboardMode():
     pygame.init()
@@ -120,11 +120,21 @@ def keyboardMode():
 
 def setup():
     robotSend.sendRobotInstructions("10.0.1.1", 1111)
-    makePath(0, 1, 4, 5)
+    #makePath(0, 1, 4, 5)
     grabAndRelease(1)
-    makePath(4, 5, 0, 1)
+    makePath(0, 1, 1, 1)
     grabAndRelease(-1)
+    makePath(1, 1, 0, 1)
+
     #keyboardMode()
+    #robotSend.instructions.put(goStraight(360, 1))
+    # time.sleep(1)
+    # robotSend.instructions.put(turnLeft(360, 1))
+    # time.sleep(1)
+    # robotSend.instructions.put(turnRight(360, -1))
+    # time.sleep(1)
+    # robotSend.instructions.put(turnLeft(360, -1))
+
     print("done")
 
 #if __name__ == "__main__":

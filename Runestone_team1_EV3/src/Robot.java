@@ -123,14 +123,15 @@ public class Robot {
 						Motor.A.backward();
 						Motor.B.backward();
 					}
-					Delay.msDelay(1000); 
+					Delay.msDelay(1500); 
 
 					detectIntersection(ev3);
 					Motor.A.stop(true); 
 					Motor.B.stop();
 					break;
 					
-			case 4: Motor.C.rotateTo(infos.getInt("angle") * infos.getInt("direction"), false);//elevator
+			case 4: Motor.C.setSpeed(100);
+					Motor.C.rotateTo(infos.getInt("angle") * infos.getInt("direction"), false);//elevator
 					break;
 
 			default: System.out.println("error wrong motor command");
@@ -148,19 +149,23 @@ public class Robot {
 		while(true){
 			//System.out.println(ev3.sensor.getColorID());
 			
-			if (ev3.sensor.getColorID() == 0){
+			if (ev3.sensor.getColorID() == 0){//red
 				break;
 			}
-			if (ev3.sensor.getColorID() == 13){
-				Motor.A.setSpeed(Motor.A.getRotationSpeed() - 30);
-				Delay.msDelay(500);
-				Motor.A.setSpeed(Motor.A.getRotationSpeed() + 30);
+			if (ev3.sensor.getColorID() == 13){//green
+				Motor.A.setSpeed(Motor.A.getSpeed() - 30);
+				//Delay.msDelay(500);
+				while(ev3.sensor.getColorID() == 13){
+				}
+				Motor.A.setSpeed(Motor.A.getSpeed() + 30);
 
 			}
-			if (ev3.sensor.getColorID() == 2){
-				Motor.B.setSpeed(Motor.B.getRotationSpeed() - 30);
-				Delay.msDelay(500);
-				Motor.B.setSpeed(Motor.B.getRotationSpeed() + 30);
+			if (ev3.sensor.getColorID() == 2){//blue
+				Motor.B.setSpeed(Motor.B.getSpeed() - 30);
+				//Delay.msDelay(500);
+				while(ev3.sensor.getColorID() == 2){
+				}
+				Motor.B.setSpeed(Motor.B.getSpeed() + 30);
 
 			}
 			
@@ -175,7 +180,7 @@ public class Robot {
 			float angle[] = new float[1];
 			ev3.gyro.getAngleMode().fetchSample(angle, 0);
 			//System.out.println(angle[0]);
-			if (Math.abs(angle[0]) > 75){
+			if (Math.abs(angle[0]) > 80){
 				break;
 			}
 		}
