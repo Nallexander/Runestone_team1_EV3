@@ -126,7 +126,7 @@ public class Robot {
 					Delay.msDelay(1500); 
 
 					detectIntersection(ev3);
-					if(infos.getInt("direction") == 1){
+					if(infos.getInt("direction") == -1){
 						Delay.msDelay(400);
 					}
 					Motor.A.stop(true); 
@@ -148,48 +148,116 @@ public class Robot {
 	 * 
 	 */
 	private static void detectIntersection(Robot ev3){
-		
+		int greenCount = 0;
+		int blueCount = 0;
 		while(true){
-			//System.out.println(ev3.sensor.getColorID());
+			int turnDuration = 50;
+			int turnDuration2 = 150;
+			int turnSpeed = 40;
+			int turnSpeed2 = 40;
 			
-			if (ev3.sensor.getColorID() == 0){//red
-				//Delay.msDelay(200);
-				break;
-			}
-			if (ev3.sensor.getColorID() == 13){//green
-				Motor.A.setSpeed(Motor.A.getSpeed() - 30);
-				Delay.msDelay(400);
-				//while(ev3.sensor.getColorID() == 13){
-				//}
-				Motor.A.setSpeed(Motor.A.getSpeed() + 60);
-				Delay.msDelay(100);
-				Motor.A.setSpeed(Motor.A.getSpeed() - 30);
-
-
-			}
-			if (ev3.sensor.getColorID() == 2){//blue
-				Motor.B.setSpeed(Motor.B.getSpeed() - 30);
-				Delay.msDelay(400);
-				//while(ev3.sensor.getColorID() == 2){
-				//}
-				Motor.B.setSpeed(Motor.B.getSpeed() + 60);
-				Delay.msDelay(100);
-				Motor.B.setSpeed(Motor.B.getSpeed() - 30);
-
-			}
+			int color = ev3.sensor.getColorID();
 			
-		
+			if (color == 0){//red
+			                //Delay.msDelay(200);
+			                //if (greenCount > 0) { //has turned from green
+			                    //for (int i = 0; i < blueCount; i++) { 
+			                    	//if (ev3.sensor.getColorID() != 0){
+			                    		//break;
+			                    	//}
+			                    	//Motor.B.setSpeed(Motor.B.getSpeed() + turnSpeed);
+			                  //      Motor.A.stop();
+			                	//	Delay.msDelay(turnDuration);
+			                        //Motor.B.setSpeed(Motor.B.getSpeed() - turnSpeed);
+			                    //}
+
+			                //}
+			                //if (blueCount >0){    //has turned from blue
+			                    //for (int i = 0; i < greenCount; i++) { 
+			                    	//if (ev3.sensor.getColorID() != 0){
+			                    		//break;
+			                    	//}
+			                    	//Motor.A.setSpeed(Motor.A.getSpeed() + turnSpeed);
+			                  //      Motor.B.stop();
+			                	//	Delay.msDelay(turnDuration);
+			                        //Motor.A.setSpeed(Motor.A.getSpeed() - turnSpeed);
+			                    //}                        
+			                //}
+			                greenCount = 0;
+			                blueCount = 0;
+			                Delay.msDelay(100);
+			                break;
+			            }
+
+			
+
+			if (color == 13){//green
+				System.out.println(color);
+			                greenCount++;
+			                Motor.A.setSpeed(Motor.A.getSpeed() - turnSpeed2);
+			                Delay.msDelay(turnDuration2);
+			                //while(ev3.sensor.getColorID() == 13){
+			                //}
+			/*                Motor.A.setSpeed(Motor.A.getSpeed() + 60);
+			                Delay.msDelay(100);*/
+			                Motor.A.setSpeed(Motor.A.getSpeed() + turnSpeed2);
+
+
+			            }
+			if (color == 2){//blue
+				System.out.println(color);
+			                blueCount++;
+			                Motor.B.setSpeed(Motor.B.getSpeed() - turnSpeed2);
+			                Delay.msDelay(turnDuration2);
+			                //while(ev3.sensor.getColorID() == 2){
+			                //}
+			/*                Motor.B.setSpeed(Motor.B.getSpeed() + 60);
+			                Delay.msDelay(100);*/
+			                Motor.B.setSpeed(Motor.B.getSpeed() + turnSpeed2);
+
+			            }
+
+			 if (color == 7){//black
+
+
+			                if (greenCount == 0) { //has turned from green
+			                	System.out.println(blueCount);
+			                    for (int i = 0; i < blueCount; i++) {
+			                    	if (ev3.sensor.getColorID() != 7){
+			                    		break;
+			                    	}
+			          
+			                        Motor.B.setSpeed(Motor.B.getSpeed() + turnSpeed);
+			                        Delay.msDelay(turnDuration);
+			                        Motor.B.setSpeed(Motor.B.getSpeed() - turnSpeed);
+			                    }
+
+			                }
+			                else {    //has turned from blue
+			                    for (int i = 0; i < greenCount; i++) { 
+			                    	if (ev3.sensor.getColorID() != 7){
+			                    		break;
+			                    	}
+			                    	Motor.A.setSpeed(Motor.A.getSpeed() + turnSpeed);
+			                        Delay.msDelay(turnDuration);
+			                        Motor.A.setSpeed(Motor.A.getSpeed() - turnSpeed);
+			                    }                        
+			                }
+			                greenCount = 0;
+			                blueCount = 0;
+			            }
 		}
 		
 	}
 	
 	private static void mesureAngle(Robot ev3){
-		ev3.gyro.reset();
+		float initialAngle[] = new float[1];
+		ev3.gyro.getAngleMode().fetchSample(initialAngle, 0);
 		while(true){
 			float angle[] = new float[1];
 			ev3.gyro.getAngleMode().fetchSample(angle, 0);
 			//System.out.println(angle[0]);
-			if (Math.abs(angle[0]) > 80){
+			if (Math.abs(initialAngle[0] - angle[0]) > 85){
 				break;
 			}
 		}

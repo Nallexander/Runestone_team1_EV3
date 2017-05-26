@@ -2,9 +2,12 @@ from threading import Thread
 import pygame
 import robotSend
 import time
+from firebase import firebase
 
-MAX_ROWS = 4
-MAX_SHELVES = 1
+firebase = firebase.FirebaseApplication('https://runestone-d1faf.firebaseio.com/', None)
+
+MAX_ROWS = firebase.get("/maps/test_map/rows", None)
+MAX_SHELVES = firebase.get("/maps/test_map/shelves", None)
 
 
 def goStraight(speed, direction):
@@ -40,13 +43,13 @@ def makePath (loc_x, loc_y, dest_x, dest_y):
             cur_y = 0
 
         for i in range(mv_on_row):
-            robotSend.instructions.put(goStraight(120, 1))
+            robotSend.instructions.put(goStraight(200, 1))
 
         robotSend.instructions.put(turnRight(200, 1))
         robotSend.path.append(None)
 
         for i in range(abs(loc_x - dest_x)):
-            robotSend.instructions.put(goStraight(120, 1))
+            robotSend.instructions.put(goStraight(200, 1))
             if cur_x == 0:
                 robotSend.path.append((cur_x + i + 1, cur_y))
             else:
@@ -61,7 +64,7 @@ def makePath (loc_x, loc_y, dest_x, dest_y):
         robotSend.path.append(None)
 
         for i in range(dest_y):
-            robotSend.instructions.put(goStraight(120, 1))
+            robotSend.instructions.put(goStraight(200, 1))
             if cur_x == 0:
                 robotSend.path.append((0, 1))
             else:
@@ -121,9 +124,9 @@ def keyboardMode():
 def setup():
     robotSend.sendRobotInstructions("10.0.1.1", 1111)
     #makePath(0, 1, 4, 5)
-    grabAndRelease(1)
-    makePath(0, 1, 1, 1)
-    grabAndRelease(-1)
+    #grabAndRelease(1)
+    makePath(0, 2, 1, 1)
+    #grabAndRelease(-1)
     makePath(1, 1, 0, 1)
 
     #keyboardMode()
