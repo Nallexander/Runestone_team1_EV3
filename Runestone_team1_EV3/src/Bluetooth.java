@@ -21,7 +21,8 @@ import lejos.hardware.ev3.EV3;
 public class Bluetooth implements Runnable {
 	private Robot ev3;
 	private BufferedReader inputStream; 
-	private BufferedWriter outputStream; 
+	//private BufferedWriter outputStream; 
+	private DataOutputStream outputStream;
 	
 	public Bluetooth (Robot ev3) {
 		this.ev3 = ev3;
@@ -46,8 +47,9 @@ public class Bluetooth implements Runnable {
 		while(true){
 			if (!ev3.tasksDone.isEmpty()){
 				response = ev3.tasksDone.remove().toString();
+				System.out.println(response);
 				try {
-					outputStream.write(response, 0, response.length());
+					outputStream.writeUTF(response);
 					System.out.println("message send");
 
 				} catch (IOException e) {
@@ -62,9 +64,14 @@ public class Bluetooth implements Runnable {
 						if (instruction != null){
 							System.out.println(instruction);
 							//instruction = instruction.substring(2);
-							ev3.instructions.add(new JSONObject(instruction));
-						}
-												
+							JSONObject JSONInstruction = new JSONObject(instruction);
+							if (JSONInstruction.getInt("type")==0){
+								ev3.instructions.clear();
+							}else{
+								ev3.instructions.add(JSONInstruction);
+						
+							}
+						}					
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
@@ -85,7 +92,8 @@ public class Bluetooth implements Runnable {
 		ServerSocket serv = new ServerSocket(port);
 		Socket s = serv.accept(); //Wait for Laptop to connect
 		this.inputStream = new BufferedReader(new InputStreamReader(s.getInputStream(), "UTF-8"));
-		this.outputStream = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+		//this.outputStream = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
+		this.outputStream = new DataOutputStream(s.getOutputStream());
 		System.out.println("Socket connected");
 	}
 }
