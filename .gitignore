@@ -1,3 +1,8 @@
 *.pyc
 
 /bin/
+
+Robot.jar
+Runestone_team1_EV3/bin/
+pythonServer/env/
+.classpath 
