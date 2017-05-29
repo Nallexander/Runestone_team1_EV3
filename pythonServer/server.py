@@ -2,7 +2,9 @@ from threading import Thread
 import serialComm
 import json
 import time
+from pprint import pprint
 import robotController
+#import fire
 from firebase import firebase
 
 firebase = firebase.FirebaseApplication('https://runestone-d1faf.firebaseio.com/', None)
@@ -11,6 +13,7 @@ packageInFront = 3; #Time until package is recognised as a package (seconds)
 temperatureUpdateTimer = 5; #Time between temperature updates (seconds)
 packageIncrement = 0; #Used to give packages seperate package names.
 
+<<<<<<< HEAD
 def movePackage(oldX, oldY, destinationX,destinationY):
     idleX = 0
     idleY = 1
@@ -21,6 +24,13 @@ def movePackage(oldX, oldY, destinationX,destinationY):
     robotController.grabAndRelease(-1)
     robotController.makePath(destinationX, destinationY, idleX, idleY)
     
+=======
+    
+#db = fire.subscriber('https://runestone-d1faf.firebaseio.com/', pprint)
+#db.start()
+
+
+>>>>>>> origin/master
 #Handles a package once it enters the system. Gives the package a name -> finds slot for package in warehouse -> stores package in database -> sends instruction to robot
 def packageHandler():
     emptySlot = findEmptySlot()
@@ -36,10 +46,16 @@ def packageHandler():
 
     destinationX = int(emptySlot[0])
     destinationY = int(emptySlot[1])
+    robotController.grabAndRelease(1)
     robotController.makePath(currentX, currentY, destinationX, destinationY)
+    robotController.grabAndRelease(-1)
+    robotController.makePath(destinationX, destinationY, currentX, currentY)
+    
     global packageBeingHandled
-    packageBeingHandled = False #Tell system it is ready for another package
-
+    while(str(firebase.get('/robots/robot1/', None)) != "{u'shelf': 0, u'row': 0}"):
+        packageBeingHandled = True 
+    packageBeingHandled= False 
+    print(packageBeingHandled)#Tell system it is ready for another package
 
 #Find the first empty slot in the warehouse
 def findEmptySlot():
@@ -48,23 +64,24 @@ def findEmptySlot():
     shelves = warehouse['shelves']
     wares = firebase.get("/warehouse", None)
     slotOccupied = False
-    for row in range(1, rows+1):
-        for shelf in range(1, shelves+1):
-            for item in wares:
-                if(int(wares[item]['row']) == row and int(wares[item]['shelf']) == shelf):
-                    slotOccupied = True
-            if(not slotOccupied):
-                return (row,shelf)
-            else:
-                slotOccupied = False
-
-    return None
+    if wares is not None:
+        for row in range(1, rows+1):
+            for shelf in range(1, shelves+1):
+                for item in wares:
+                    if(int(wares[item]['row']) == row and int(wares[item]['shelf']) == shelf):
+                        slotOccupied = True
+                if(not slotOccupied):
+                    return (row,shelf)
+                else:
+                    slotOccupied = False
+    
+    return (1,1)
 
 #Updates the temperature value of items in database
 def updateTemperature(temp):
     wares = firebase.get("/warehouse", None)
     global temperatureUpdateTimer
-    if(temperatureUpdateTimer <= 0): #Update when timer reaches 0
+    if(temperatureUpdateTimer <= 0 and wares is not None): #Update when timer reaches 0
         for item in wares:
             if(wares[item]['row'] == 1): #Update all items in row 1
                 firebase.patch("/warehouse/"+item,{'temperature':temp})
@@ -145,5 +162,6 @@ def checkForDBUpdates():
 if __name__ == "__main__":
     #packageHandler();
     robotController.setup();
+    
+    #serialComm.readCommValues("COM3", handleArduinoValues);
     print "hi"
-#    serialComm.readCommValues("COM4", handleArduinoValues);

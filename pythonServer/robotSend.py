@@ -8,6 +8,7 @@ firebase = firebase.FirebaseApplication('https://runestone-d1faf.firebaseio.com/
 instructions = Queue.Queue()
 path = []
 
+
 def sendRobotInstructions(addr, port):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((addr, port))
