@@ -84,8 +84,6 @@ def grabAndRelease(direction):
     robotSend.instructions.put(turnRight(200, 1))
 
 def keyboardMode():
-    pygame.init()
-    pygame.display.iconify()
     robotSend.instructions.put(" \"type\" : \"0\" ")
     while True:
         for event in pygame.event.get():
@@ -122,12 +120,12 @@ def keyboardMode():
 
 
 def setup():
-    robotSend.sendRobotInstructions("10.0.1.1", 1111)
+    #robotSend.sendRobotInstructions("10.0.1.1", 1111)
     #makePath(0, 1, 4, 5)
     #grabAndRelease(1)
-    makePath(0, 2, 1, 1)
+    #makePath(0, 2, 1, 1)
     #grabAndRelease(-1)
-    makePath(1, 1, 0, 1)
+    #makePath(1, 1, 0, 1)
 
     #keyboardMode()
     #robotSend.instructions.put(goStraight(360, 1))
