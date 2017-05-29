@@ -13,7 +13,7 @@ packageInFront = 3; #Time until package is recognised as a package (seconds)
 temperatureUpdateTimer = 5; #Time between temperature updates (seconds)
 packageIncrement = 0; #Used to give packages seperate package names.
 
-<<<<<<< HEAD
+
 def movePackage(oldX, oldY, destinationX,destinationY):
     idleX = 0
     idleY = 1
@@ -23,14 +23,8 @@ def movePackage(oldX, oldY, destinationX,destinationY):
     robotController.makePath(idleX, idleY, destinationX, destinationY)
     robotController.grabAndRelease(-1)
     robotController.makePath(destinationX, destinationY, idleX, idleY)
-    
-=======
-    
-#db = fire.subscriber('https://runestone-d1faf.firebaseio.com/', pprint)
-#db.start()
 
 
->>>>>>> origin/master
 #Handles a package once it enters the system. Gives the package a name -> finds slot for package in warehouse -> stores package in database -> sends instruction to robot
 def packageHandler():
     emptySlot = findEmptySlot()
@@ -41,20 +35,19 @@ def packageHandler():
 
     #TODO ROBOT STUFF
     #current x,y of robot - 0,1 is idle position of robot
-    currentX = 0
-    currentY = 1
-
+    idleX = 0
+    idleY = 1
     destinationX = int(emptySlot[0])
     destinationY = int(emptySlot[1])
     robotController.grabAndRelease(1)
-    robotController.makePath(currentX, currentY, destinationX, destinationY)
+    robotController.makePath(idleX, idleY, destinationX, destinationY)
     robotController.grabAndRelease(-1)
-    robotController.makePath(destinationX, destinationY, currentX, currentY)
-    
+    robotController.makePath(destinationX, destinationY, idleX, idleY)
+
     global packageBeingHandled
     while(str(firebase.get('/robots/robot1/', None)) != "{u'shelf': 0, u'row': 0}"):
-        packageBeingHandled = True 
-    packageBeingHandled= False 
+        packageBeingHandled = True
+    packageBeingHandled= False
     print(packageBeingHandled)#Tell system it is ready for another package
 
 #Find the first empty slot in the warehouse
@@ -74,7 +67,7 @@ def findEmptySlot():
                     return (row,shelf)
                 else:
                     slotOccupied = False
-    
+
     return (1,1)
 
 #Updates the temperature value of items in database
@@ -134,34 +127,34 @@ def findChangedPackage(old_dict, new_dict):
     for key in old_dict:
         if (old_dict[key] != new_dict[key]):
             # Return old row, old shelf, new row, new shelf
-            return (old_dict[key][‘row’], old_dict[key][‘shelf’], new_dict[key][‘row’], new_dict[key][‘shelf’])
+            return (old_dict[key]['row'], old_dict[key]['shelf'], new_dict[key]['row'], new_dict[key]['shelf'])
 
 
 #Find if a package has been added, removed, or changed
 def findDifferentValue(old_dict, new_dict):
     if (len(old_dict) < len(new_dict)):
-        print(“Package added”)
+        print("Package added")
         print(findAddedPackage(old_dict, new_dict))
     elif (len(old_dict) > len(new_dict)):
-        print(“Package removed”)
+        print("Package removed")
         print(findRemovedPackage(old_dict, new_dict))
     else:
-        print(“Value changed”)
+        print("Value changed")
         return(findChangedPackage(old_dict, new_dict))
 
 #Continuously checks firebase DB for updates in the database
 def checkForDBUpdates():
-    old_result = firebase.get(‘/warehouse’, None)
+    old_result = firebase.get('/warehouse', None)
     while (True):
-        new_result = firebase.get(‘/warehouse’, None)
+        new_result = firebase.get('/warehouse', None)
         if (old_result != new_result):
-            print(“different”)
             movePackage(findDifferentValue(old_result, new_result))
             old_result = new_result
 
 if __name__ == "__main__":
     #packageHandler();
     robotController.setup();
-    
+    checkDBThread = Thread(target = checkForDBUpdates, args = ())
+    checkDBThread.start()
     #serialComm.readCommValues("COM3", handleArduinoValues);
     print "hi"
