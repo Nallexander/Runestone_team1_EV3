@@ -2,6 +2,7 @@ from threading import Thread
 import pygame
 import robotSend
 import time
+import keyboardCheck
 from firebase import firebase
 
 firebase = firebase.FirebaseApplication('https://runestone-d1faf.firebaseio.com/', None)
@@ -85,11 +86,11 @@ def grabAndRelease(direction):
 
 def keyboardMode():
     robotSend.instructions.put(" \"type\" : \"0\" ")
+    print("here")
     while True:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    pygame.display.quit()
                     return
                 if event.key == pygame.K_UP:
                     robotSend.instructions.put(JSONkey(3, 1))
@@ -126,6 +127,7 @@ def setup():
     #makePath(0, 2, 1, 1)
     #grabAndRelease(-1)
     #makePath(1, 1, 0, 1)
+    keyboardCheck.checkForManual()
 
     #keyboardMode()
     #robotSend.instructions.put(goStraight(360, 1))
