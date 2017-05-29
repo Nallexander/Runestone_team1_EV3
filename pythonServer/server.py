@@ -148,7 +148,8 @@ def checkForDBUpdates():
     while (True):
         new_result = firebase.get('/warehouse', None)
         if (old_result != new_result):
-            movePackage(findDifferentValue(old_result, new_result))
+            if(findDifferentValue(old_result, new_result)):
+                movePackage()
             old_result = new_result
 
 if __name__ == "__main__":
