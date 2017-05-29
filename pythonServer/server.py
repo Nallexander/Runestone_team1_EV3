@@ -13,7 +13,7 @@ packageInFront = 3; #Time until package is recognised as a package (seconds)
 temperatureUpdateTimer = 5; #Time between temperature updates (seconds)
 packageIncrement = 0; #Used to give packages seperate package names.
 
-
+#Moves a package from one warehouse location to another
 def movePackage(oldX, oldY, destinationX,destinationY):
     idleX = 0
     idleY = 1
